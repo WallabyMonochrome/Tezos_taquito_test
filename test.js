@@ -11,15 +11,14 @@ const account = await Tezos.signer.publicKeyHash();
 const balance = await Tezos.tz.getBalance(account);
 console.log('Account balance', balance, account);
 
-Tezos.contract.originate({
-    code,
-    init: getStorage('tz1LykkvktD4bc4Voh7JWWWNspKAsUvBtC8o', 100000),
-})
-    .then((originationOp) => {
-        println(`Waiting for confirmation of origination for ${originationOp.contractAddress}...`);
-        return originationOp.contract();
-    })
-    .then((contract) => {
-        console.log(`Origination completed.`, contract);
-    })
-    .catch((error) => console.error(`Error: ${JSON.stringify(error, null)}`));
+async function main() {
+    const operation = await Tezos.contract.originate({
+        code: code,
+        init: getStorage(account, 100000),
+    });
+    console.log(`Waiting for confirmation of origination...`);
+    const contract = await operation.contract();
+    console.log(`Waiting for confirmation of origination...`, contract);
+}
+
+main();
